@@ -83,7 +83,7 @@ grant execute on function public.is_admin() to anon, authenticated;
 insert into public.settings (key, value) values ('whatsapp', '') on conflict (key) do nothing;
 
 -- Администратор (замените email на свой!)
-insert into public.admins (email) values ('YOUR_EMAIL@example.com') on conflict do nothing;
+insert into public.admins (email) values ('altairutyashev@bk.ru') on conflict do nothing;
 
 -- Товары (42 позиции из вашего каталога). Запускать один раз.
 insert into public.products (name, category, price, emoji, sort) values
