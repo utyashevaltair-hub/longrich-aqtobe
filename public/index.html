@@ -67,7 +67,11 @@ button{font:inherit;cursor:pointer}
 textarea.inp{font-family:inherit;resize:vertical}
 .lang{display:flex;justify-content:flex-end;gap:6px;margin-bottom:8px}.lang button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:600}.lang .on{background:var(--brand);color:#fff;border-color:var(--brand)}
 .spec{width:100%;border-collapse:collapse;font-size:14px}.spec th{text-align:left;vertical-align:top;color:var(--mut);font-weight:600;padding:6px 10px 6px 0;width:34%}.spec td{padding:6px 0}.spec tr+tr{border-top:1px solid var(--line)}
-.gal img{background:#fff}
+.ico.ph{height:auto;aspect-ratio:1/1;background:#fff;border:1px solid var(--line)}
+.ico.ph img{object-fit:contain}
+.gal{scroll-snap-type:x mandatory;gap:10px}
+.gal img{background:#fff;border:1px solid var(--line);height:auto;width:100%;max-width:100%;aspect-ratio:1/1;object-fit:contain;scroll-snap-align:center;flex:none}
+.th img{width:80px;height:80px;aspect-ratio:auto;object-fit:contain;background:#fff}
 </style>
 </head>
 <body>
@@ -114,8 +118,10 @@ async function load(){
       var a=await sb.from('products').select('*').order('sort').order('id');
       var b=await sb.from('settings').select('*');
       if(a.error)throw a.error;
-      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',ph:r.photos||[],nk:r.name_kk||'',ck:r.category_kk||'',dk:r.description_kk||'',tk:r.details_kk||''}});
+      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',s:r.sort,ph:r.photos||[],nk:r.name_kk||'',ck:r.category_kk||'',dk:r.description_kk||'',tk:r.details_kk||''}});
       WA='';((b.data)||[]).forEach(function(s){if(s.key==='whatsapp')WA=(s.value||'').replace(/\D/g,'')});
+      if(!a.data.some(function(r){return r.name_kk})){var CM={};(window.CATALOG||[]).forEach(function(c){CM[c.n]=c});
+        P.forEach(function(p){var c=CM[p.n];if(!c)return;['nk','ck','dk','tk','d','t'].forEach(function(k){if(!p[k])p[k]=c[k]});if(!(p.ph&&p.ph.length))p.ph=c.ph.slice()})}
       online=true;
     }catch(e){console.warn('Supabase:',e)}
   }
