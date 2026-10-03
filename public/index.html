@@ -114,10 +114,8 @@ async function load(){
       var a=await sb.from('products').select('*').order('sort').order('id');
       var b=await sb.from('settings').select('*');
       if(a.error)throw a.error;
-      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',s:r.sort,ph:r.photos||[],nk:r.name_kk||'',ck:r.category_kk||'',dk:r.description_kk||'',tk:r.details_kk||''}});
+      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',ph:r.photos||[],nk:r.name_kk||'',ck:r.category_kk||'',dk:r.description_kk||'',tk:r.details_kk||''}});
       WA='';((b.data)||[]).forEach(function(s){if(s.key==='whatsapp')WA=(s.value||'').replace(/\D/g,'')});
-      if(!a.data.some(function(r){return r.name_kk})){var CM={},CS={};(window.CATALOG||[]).forEach(function(c){CM[c.n]=c;CS[c.sort]=c});
-        P.forEach(function(p){var c=CM[p.n]||CS[p.s];if(!c)return;['nk','ck','dk','tk','d','t'].forEach(function(k){if(!p[k])p[k]=c[k]});if(!(p.ph&&p.ph.length))p.ph=c.ph.slice()})}
       online=true;
     }catch(e){console.warn('Supabase:',e)}
   }
