@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ru">
+<html lang="kk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#00877d">
-<meta name="description" content="Longrich Aqtobe — здоровье, красота, качество. Каталог и заявка в WhatsApp.">
+<meta name="description" content="Longrich Aqtobe — денсаулық, сұлулық, сапа. Каталог және WhatsApp-қа тапсырыс.">
 <title>Longrich Aqtobe 04</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
@@ -65,12 +65,16 @@ button{font:inherit;cursor:pointer}
 .th{position:relative;flex:none}.th img{height:80px;border-radius:10px}.th button{position:absolute;top:2px;right:2px;border:0;border-radius:50%;width:22px;height:22px;background:#000a;color:#fff}
 .dsc{font-size:14px;line-height:1.5}.det{padding-left:18px;font-size:14px;line-height:1.5}.sheet h3{font-size:15px;margin:12px 0 4px}
 textarea.inp{font-family:inherit;resize:vertical}
+.lang{display:flex;justify-content:flex-end;gap:6px;margin-bottom:8px}.lang button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:600}.lang .on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.spec{width:100%;border-collapse:collapse;font-size:14px}.spec th{text-align:left;vertical-align:top;color:var(--mut);font-weight:600;padding:6px 10px 6px 0;width:34%}.spec td{padding:6px 0}.spec tr+tr{border-top:1px solid var(--line)}
+.gal img{background:#fff}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
+<script src="catalog.js"></script>
 <script>
 (function(){
 /* Резервный каталог: показывается, если Supabase не настроен или недоступен */
@@ -83,6 +87,18 @@ var P=[],WA='',cart={},cat='Все',q='',admin=false,online=false,loaded=false,t
 try{cart=JSON.parse(localStorage.getItem('lac2')||'{}')}catch(e){}
 function save(){try{localStorage.setItem('lac2',JSON.stringify(cart))}catch(e){}}
 var $=function(s){return document.querySelector(s)};
+var LG='kk',adminMode=false;try{LG=localStorage.getItem('lalg')||'kk'}catch(e){}
+function N(p){return LG==='kk'&&p.nk?p.nk:p.n}
+function Dd(p){return LG==='kk'&&p.dk?p.dk:(p.d||'')}
+function Tt(p){return LG==='kk'&&p.tk?p.tk:(p.t||'')}
+function CL(c){if(LG!=='kk')return c;if(c==='Все')return 'Барлығы';for(var i=0;i<P.length;i++)if(P[i].c===c&&P[i].ck)return P[i].ck;return c}
+var DICT={'Здоровье · Красота · Качество':'Денсаулық · Сұлулық · Сапа','Поиск товара':'Тауар іздеу','В корзину':'Себетке','Корзина':'Себет',' шт.':' дана','Ваша заявка':'Сіздің тапсырысыңыз','Итого':'Барлығы','Ваше имя':'Атыңыз','Телефон, например +7 701 123 45 67':'Телефон, мысалы +7 701 123 45 67','Комментарий (необязательно)':'Пікір (міндетті емес)','Отправить заявку':'Тапсырыс жіберу','Регистрация не нужна. Мы свяжемся с вами по указанному номеру, подтвердим заказ, цену и доставку.':'Тіркелу қажет емес. Көрсетілген нөмір бойынша хабарласып, тапсырысты, бағаны және жеткізуді растаймыз.','Закрыть':'Жабу','Добавлено в корзину':'Себетке қосылды','Ничего не найдено':'Ештеңе табылмады','Загрузка…':'Жүктелуде…','Продукция не является лекарственным средством. Перед применением рекомендуется консультация специалиста.':'Өнім дәрі емес. Қолданар алдында маманмен кеңескен жөн.','Спасибо! 🌿':'Рақмет! 🌿','Заявка готова к отправке в WhatsApp. Нажмите «Отправить» в открывшемся чате, и мы свяжемся с вами.':'Тапсырыс WhatsApp-қа жіберуге дайын. Ашылған чатта «Жіберу» түймесін басыңыз, біз сізбен хабарласамыз.','Заявка принята. Мы свяжемся с вами по указанному номеру.':'Тапсырыс қабылданды. Көрсетілген нөмір бойынша хабарласамыз.','Хорошо':'Жақсы','Укажите номер телефона':'Телефон нөмірін көрсетіңіз','Номер WhatsApp ещё не указан':'WhatsApp нөмірі әлі көрсетілмеген','Не удалось загрузить актуальный каталог — показан сохранённый вариант.':'Өзекті каталог жүктелмеді — сақталған нұсқа көрсетілді.','Не удалось отправить заявку. Проверьте интернет и попробуйте ещё раз.':'Тапсырыс жіберілмеді. Интернетті тексеріп, қайталап көріңіз.'};
+var DK=Object.keys(DICT).sort(function(a,b){return b.length-a.length});
+function trs(x){DK.forEach(function(k){if(x.indexOf(k)>-1)x=x.split(k).join(DICT[k])});return x}
+function trAll(){if(LG!=='kk'||adminMode)return;var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n,L=[];while(n=w.nextNode())L.push(n);
+  L.forEach(function(n){var v=trs(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
+  document.querySelectorAll('[placeholder]').forEach(function(e){var v=trs(e.placeholder);if(v!==e.placeholder)e.placeholder=v})}
+new MutationObserver(trAll).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return Number(n).toLocaleString('ru-RU')+' ₸'}
 var WAI='<svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.6.3.1.2.1.8-.1 1.4z"/></svg>';
@@ -98,13 +114,13 @@ async function load(){
       var a=await sb.from('products').select('*').order('sort').order('id');
       var b=await sb.from('settings').select('*');
       if(a.error)throw a.error;
-      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',ph:r.photos||[]}});
+      P=a.data.map(function(r){return{id:r.id,n:r.name,c:r.category,p:r.price,e:r.emoji||'🌿',h:!!r.hidden,d:r.description||'',t:r.details||'',ph:r.photos||[],nk:r.name_kk||'',ck:r.category_kk||'',dk:r.description_kk||'',tk:r.details_kk||''}});
       WA='';((b.data)||[]).forEach(function(s){if(s.key==='whatsapp')WA=(s.value||'').replace(/\D/g,'')});
       online=true;
     }catch(e){console.warn('Supabase:',e)}
   }
   if(!online){
-    P=FALLBACK.p.map(function(p,i){return{id:i,n:p[0],c:p[1],p:p[2],e:p[3],h:false}});
+    P=(window.CATALOG||[]).map(function(p,i){return{id:i,n:p.n,c:p.c,p:p.p,e:p.e,h:false,d:p.d,t:p.t,ph:p.ph,nk:p.nk,ck:p.ck,dk:p.dk,tk:p.tk}});
     WA=FALLBACK.wa||'';
   }
   Object.keys(cart).forEach(function(k){var p=find(k);if(!p||p.h)delete cart[k]});
@@ -113,7 +129,8 @@ async function load(){
 
 /* ───── Витрина ───── */
 function build(){
-  $('#app').innerHTML='<header><div class="brand"><img src="logo.png" alt="Longrich Aqtobe 04"></div><p class="tag">Здоровье · Красота · Качество</p><input id="q" class="search" placeholder="Поиск товара" type="search"></header><div id="ban"></div><div class="chips" id="chips"></div><div class="grid" id="grid"></div><div class="foot">Продукция не является лекарственным средством. Перед применением рекомендуется консультация специалиста.<div id="adm"></div></div><button class="wa" id="wa" aria-label="WhatsApp">'+WAI+'</button><div id="bar"></div><div id="ov"></div>';
+  $('#app').innerHTML='<header><div class="lang"><button data-l="kk" class="'+(LG==='kk'?'on':'')+'">ҚАЗ</button><button data-l="ru" class="'+(LG==='ru'?'on':'')+'">РУС</button></div><div class="brand"><img src="logo.png" alt="Longrich Aqtobe 04"></div><p class="tag">Здоровье · Красота · Качество</p><input id="q" class="search" placeholder="Поиск товара" type="search"></header><div id="ban"></div><div class="chips" id="chips"></div><div class="grid" id="grid"></div><div class="foot">Продукция не является лекарственным средством. Перед применением рекомендуется консультация специалиста.<div id="adm"></div></div><button class="wa" id="wa" aria-label="WhatsApp">'+WAI+'</button><div id="bar"></div><div id="ov"></div>';
+  $('.lang').onclick=function(e){var l=e.target.dataset.l;if(l&&l!==LG){LG=l;try{localStorage.setItem('lalg',l)}catch(x){}document.documentElement.lang=l;build()}};
   $('#q').oninput=function(e){q=e.target.value.toLowerCase();grid()};
   $('#wa').onclick=function(){if(WA)window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('Здравствуйте! Хочу узнать о товарах Longrich.'),'_blank');else toast('Номер WhatsApp ещё не указан')};
   $('#chips').onclick=function(e){var c=e.target.dataset.c;if(c){cat=c;chips();grid()}};
@@ -124,12 +141,12 @@ function banner(){$('#ban').innerHTML=(!online&&sb)?'<div class="banner">Не у
 function chips(){
   var cs=['Все'];shown().forEach(function(p){if(cs.indexOf(p.c)<0)cs.push(p.c)});
   if(cs.indexOf(cat)<0)cat='Все';
-  $('#chips').innerHTML=cs.map(function(c){return'<button class="chip'+(c===cat?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>'}).join('');
+  $('#chips').innerHTML=cs.map(function(c){return'<button class="chip'+(c===cat?' on':'')+'" data-c="'+esc(c)+'">'+esc(CL(c))+'</button>'}).join('');
 }
 function grid(){
-  var h=shown().filter(function(p){return(cat==='Все'||p.c===cat)&&p.n.toLowerCase().indexOf(q)>-1}).map(function(p){
+  var h=shown().filter(function(p){return(cat==='Все'||p.c===cat)&&(p.n+' '+(p.nk||'')).toLowerCase().indexOf(q)>-1}).map(function(p){
     var k=cart[p.id];
-    return'<div class="card"><div class="ico'+(p.ph&&p.ph[0]?' ph':'')+'" data-v="'+p.id+'">'+(p.ph&&p.ph[0]?'<img src="'+esc(p.ph[0])+'" loading="lazy" alt="">':esc(p.e||'🌿'))+'</div><div class="nm" data-v="'+p.id+'">'+esc(p.n)+'</div><div class="pr">'+money(p.p)+'</div>'+(k?'<div class="qty"><button data-m="'+p.id+'">−</button><b>'+k+'</b><button data-a="'+p.id+'">+</button></div>':'<button class="add" data-a="'+p.id+'">В корзину</button>')+'</div>'
+    return'<div class="card"><div class="ico'+(p.ph&&p.ph[0]?' ph':'')+'" data-v="'+p.id+'">'+(p.ph&&p.ph[0]?'<img src="'+esc(p.ph[0])+'" loading="lazy" alt="">':esc(p.e||'🌿'))+'</div><div class="nm" data-v="'+p.id+'">'+esc(N(p))+'</div><div class="pr">'+money(p.p)+'</div>'+(k?'<div class="qty"><button data-m="'+p.id+'">−</button><b>'+k+'</b><button data-a="'+p.id+'">+</button></div>':'<button class="add" data-a="'+p.id+'">В корзину</button>')+'</div>'
   }).join('');
   $('#grid').innerHTML=h||'<p class="note" style="grid-column:1/-1;text-align:center">'+(loaded?'Ничего не найдено':'Загрузка…')+'</p>';
 }
@@ -137,12 +154,13 @@ function grid(){
 /* ───── Карточка товара ───── */
 function detail(id){var p=find(id);if(!p)return;
   var im=(p.ph||[]).map(function(u){return'<img src="'+esc(u)+'" loading="lazy" alt="">'}).join('');
-  var li=(p.t||'').split('\n').filter(function(x){return x.trim()}).map(function(x){return'<li>'+esc(x)+'</li>'}).join('');
-  sheet((im?'<div class="gal">'+im+'</div>':'<div class="ico" style="font-size:64px">'+esc(p.e)+'</div>')+'<h2>'+esc(p.n)+'</h2><div class="pr" style="font-size:20px">'+money(p.p)+'</div>'+(p.d?'<p class="dsc">'+esc(p.d).replace(/\n/g,'<br>')+'</p>':'')+(li?'<h3>Характеристики</h3><ul class="det">'+li+'</ul>':'')+'<button class="big" id="dadd">В корзину</button><button class="ghost" id="dcl">Закрыть</button>');
+  var rows=Tt(p).split('\n').filter(function(x){return x.trim()}).map(function(x){var i=x.indexOf(':');return i>0&&i<20?'<tr><th>'+esc(x.slice(0,i))+'</th><td>'+esc(x.slice(i+1).trim())+'</td></tr>':'<tr><td colspan="2">'+esc(x)+'</td></tr>'}).join('');
+  var d=Dd(p);
+  sheet((im?'<div class="gal">'+im+'</div>':'<div class="ico" style="font-size:64px">'+esc(p.e)+'</div>')+'<h2>'+esc(N(p))+'</h2><div class="pr" style="font-size:20px">'+money(p.p)+'</div>'+(d?'<p class="dsc">'+esc(d).replace(/\n/g,'<br>')+'</p>':'')+(rows?'<h3>Характеристики</h3><table class="spec">'+rows+'</table>':'')+'<button class="big" id="dadd">В корзину</button><button class="ghost" id="dcl">Закрыть</button>');
   $('#dadd').onclick=function(){chg(p.id,1);close();toast('Добавлено в корзину')};$('#dcl').onclick=close}
 function shrink(f){return new Promise(function(r){var im=new Image();im.onload=function(){var k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(r,'image/jpeg',.85)};im.src=URL.createObjectURL(f)})}
 function cardEdit(i){var p=draft[i];
-  sheet('<h2>Карточка товара</h2><b>'+esc(p.n)+'</b><label class="note">Описание</label><textarea class="inp" id="cd" rows="5">'+esc(p.d)+'</textarea><label class="note">Характеристики — каждая с новой строки (состав, объём, применение…)</label><textarea class="inp" id="ct" rows="6">'+esc(p.t)+'</textarea><label class="note">Фото (первое — на витрине)</label><div class="gal" id="cph"></div><input type="file" id="cf" accept="image/*" multiple hidden><button class="ghost" id="cfb">📷 Добавить фото</button><button class="big" id="cok">Готово</button>');
+  sheet('<h2>Карточка товара</h2><b>'+esc(p.n)+'</b><label class="note">Описание (рус.)</label><textarea class="inp" id="cd" rows="4">'+esc(p.d)+'</textarea><label class="note">Характеристики (рус.) — каждая с новой строки в виде «Название: значение» (Количество, Объём, Состав, Применение…)</label><textarea class="inp" id="ct" rows="6">'+esc(p.t)+'</textarea><label class="note">Сипаттама (қаз.)</label><textarea class="inp" id="cdk" rows="4">'+esc(p.dk)+'</textarea><label class="note">Сипаттамасы (қаз.) — «Атауы: мәні»</label><textarea class="inp" id="ctk" rows="6">'+esc(p.tk)+'</textarea><label class="note">Фото (первое — на витрине)</label><div class="gal" id="cph"></div><input type="file" id="cf" accept="image/*" multiple hidden><button class="ghost" id="cfb">📷 Добавить фото</button><button class="big" id="cok">Готово</button>');
   function ph(){$('#cph').innerHTML=p.ph.map(function(u,k){return'<div class="th"><img src="'+esc(u)+'" alt=""><button data-k="'+k+'">✕</button></div>'}).join('')}
   ph();
   $('#cph').onclick=function(e){var k=e.target.dataset.k;if(k!=null){p.ph.splice(k,1);ph()}};
@@ -152,7 +170,7 @@ function cardEdit(i){var p=draft[i];
       var u=await sb.storage.from('product-photos').upload(path,bl,{contentType:'image/jpeg'});if(u.error)throw u.error;
       p.ph.push(sb.storage.from('product-photos').getPublicUrl(path).data.publicUrl)}ph()}
     catch(x){toast('Ошибка загрузки: '+(x.message||x))}b.textContent='📷 Добавить фото'};
-  $('#cok').onclick=function(){p.d=$('#cd').value;p.t=$('#ct').value;adminDraw()}}
+  $('#cok').onclick=function(){p.d=$('#cd').value;p.t=$('#ct').value;p.dk=$('#cdk').value;p.tk=$('#ctk').value;adminDraw()}}
 
 /* ───── Корзина ───── */
 function cnt(){var n=0,s=0;Object.keys(cart).forEach(function(k){var p=find(k);if(p&&!p.h){n+=cart[k];s+=cart[k]*p.p}});return{n:n,s:s}}
@@ -164,11 +182,11 @@ function bar(){
   if(c.n)$('#cb').onclick=cartView;
 }
 function sheet(h){$('#ov').innerHTML='<div class="shade" id="sh"><div class="sheet">'+h+'</div></div>';$('#sh').onclick=function(e){if(e.target.id==='sh')close()}}
-function close(){$('#ov').innerHTML=''}
+function close(){adminMode=false;$('#ov').innerHTML=''}
 function toast(t){var d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 function cartView(){
   var c=cnt();if(!c.n){close();return}
-  var rows=Object.keys(cart).map(function(k){var p=find(k);if(!p||p.h)return'';return'<div class="row"><div class="t">'+esc(p.e)+' '+esc(p.n)+'<br><span class="note">'+money(p.p)+' × '+cart[k]+'</span></div><div class="qty" style="width:104px"><button data-m="'+p.id+'">−</button><b>'+cart[k]+'</b><button data-a="'+p.id+'">+</button></div></div>'}).join('');
+  var rows=Object.keys(cart).map(function(k){var p=find(k);if(!p||p.h)return'';return'<div class="row"><div class="t">'+esc(p.e)+' '+esc(N(p))+'<br><span class="note">'+money(p.p)+' × '+cart[k]+'</span></div><div class="qty" style="width:104px"><button data-m="'+p.id+'">−</button><b>'+cart[k]+'</b><button data-a="'+p.id+'">+</button></div></div>'}).join('');
   var keepN=$('#nm')?$('#nm').value:'',keepP=$('#ph')?$('#ph').value:'',keepC=$('#cm')?$('#cm').value:'';
   sheet('<h2>Ваша заявка</h2><div id="cartlist">'+rows+'</div><div class="tot"><span>Итого</span><span>'+money(c.s)+'</span></div><input class="inp" id="nm" placeholder="Ваше имя" autocomplete="name"><input class="inp" id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="Телефон, например +7 701 123 45 67"><input class="inp" id="cm" placeholder="Комментарий (необязательно)"><button class="big" id="go">Отправить заявку</button><p class="note">Регистрация не нужна. Мы свяжемся с вами по указанному номеру, подтвердим заказ, цену и доставку.</p><button class="ghost" id="cl">Закрыть</button>');
   $('#nm').value=keepN;$('#ph').value=keepP;$('#cm').value=keepC;
@@ -216,10 +234,10 @@ function loginSheet(){
   };
 }
 function adminOpen(){
-  draft=P.map(function(p){return{id:p.id,n:p.n,c:p.c,p:p.p,e:p.e,h:p.h,d:p.d||'',t:p.t||'',ph:(p.ph||[]).slice()}});
+  draft=P.map(function(p){return{id:p.id,n:p.n,c:p.c,p:p.p,e:p.e,h:p.h,d:p.d||'',t:p.t||'',ph:(p.ph||[]).slice(),nk:p.nk||'',ck:p.ck||'',dk:p.dk||'',tk:p.tk||''}});
   removed=[];waDraft=WA;tab='p';adminDraw();
 }
-function adminDraw(){
+function adminDraw(){adminMode=true;
   sheet('<h2>Админ-панель</h2><div class="tabs"><button class="chip'+(tab==='p'?' on':'')+'" data-t="p">Товары</button><button class="chip'+(tab==='o'?' on':'')+'" data-t="o">Заказы</button><button class="chip'+(tab==='s'?' on':'')+'" data-t="s">Настройки</button></div><div id="atab"></div><button class="ghost" id="ac">Закрыть</button>');
   $('#ac').onclick=close;
   document.querySelector('.tabs').onclick=function(e){var t=e.target.dataset.t;if(t){tab=t;adminDraw()}};
@@ -229,12 +247,12 @@ function prodTab(){
   var cats=[];draft.forEach(function(p){if(p.c&&cats.indexOf(p.c)<0)cats.push(p.c)});
   $('#atab').innerHTML='<datalist id="cats">'+cats.map(function(c){return'<option value="'+esc(c)+'">'}).join('')+'</datalist><div class="note">Название · категория · цена (₸) · значок · скрыть · ✏️ — описание, характеристики, фото</div><div id="pl"></div><button class="ghost" id="an">+ Добавить товар</button><button class="big" id="as">Сохранить</button>';
   plist();
-  $('#an').onclick=function(){draft.push({id:null,n:'Новый товар',c:cat!=='Все'?cat:(cats[0]||'БАДы'),p:0,e:'🌿',h:false,d:'',t:'',ph:[]});plist();var l=$('#pl');l.lastChild&&l.lastChild.scrollIntoView({block:'center'})};
+  $('#an').onclick=function(){draft.push({id:null,n:'Новый товар',c:cat!=='Все'?cat:(cats[0]||'БАДы'),p:0,e:'🌿',h:false,d:'',t:'',ph:[],nk:'',ck:'',dk:'',tk:''});plist();var l=$('#pl');l.lastChild&&l.lastChild.scrollIntoView({block:'center'})};
   $('#as').onclick=saveAll;
 }
 function plist(){
   $('#pl').innerHTML=draft.map(function(p,i){
-    return'<div class="pe"><input class="inp" data-i="'+i+'" data-f="n" value="'+esc(p.n)+'" maxlength="200"><div class="pe2"><input class="inp c" list="cats" data-i="'+i+'" data-f="c" value="'+esc(p.c)+'" maxlength="60"><input class="inp p" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-f="p" value="'+p.p+'"><input class="inp e" data-i="'+i+'" data-f="e" value="'+esc(p.e)+'" maxlength="8"><label><input type="checkbox" data-i="'+i+'" data-f="h"'+(p.h?' checked':'')+'>скрыть</label><button data-x="'+i+'" aria-label="Карточка">✏️</button><button data-d="'+i+'" aria-label="Удалить">🗑</button></div></div>'
+    return'<div class="pe"><input class="inp" data-i="'+i+'" data-f="n" value="'+esc(p.n)+'" maxlength="200"><input class="inp" placeholder="Атауы (қаз.)" data-i="'+i+'" data-f="nk" value="'+esc(p.nk)+'" maxlength="200"><input class="inp" placeholder="Санат (қаз.)" data-i="'+i+'" data-f="ck" value="'+esc(p.ck)+'" maxlength="60"><div class="pe2"><input class="inp c" list="cats" data-i="'+i+'" data-f="c" value="'+esc(p.c)+'" maxlength="60"><input class="inp p" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-f="p" value="'+p.p+'"><input class="inp e" data-i="'+i+'" data-f="e" value="'+esc(p.e)+'" maxlength="8"><label><input type="checkbox" data-i="'+i+'" data-f="h"'+(p.h?' checked':'')+'>скрыть</label><button data-x="'+i+'" aria-label="Карточка">✏️</button><button data-d="'+i+'" aria-label="Удалить">🗑</button></div></div>'
   }).join('');
   var el=$('#pl');
   el.oninput=el.onchange=function(e){var d=e.target.dataset;if(d.i==null)return;draft[d.i][d.f]=e.target.type==='checkbox'?e.target.checked:e.target.value};
@@ -251,7 +269,7 @@ async function saveAll(){
   try{
     var ex=[],nw=[];
     draft.forEach(function(p,i){
-      var row={name:String(p.n).trim()||'Без названия',category:String(p.c||'').trim()||'Другое',price:Math.max(0,Math.round(Number(p.p)||0)),emoji:String(p.e||'').trim()||'🌿',hidden:!!p.h,description:String(p.d||'').trim(),details:String(p.t||'').trim(),photos:p.ph||[],sort:i*10};
+      var row={name:String(p.n).trim()||'Без названия',category:String(p.c||'').trim()||'Другое',price:Math.max(0,Math.round(Number(p.p)||0)),emoji:String(p.e||'').trim()||'🌿',hidden:!!p.h,description:String(p.d||'').trim(),name_kk:String(p.nk||'').trim(),category_kk:String(p.ck||'').trim(),description_kk:String(p.dk||'').trim(),details_kk:String(p.tk||'').trim(),details:String(p.t||'').trim(),photos:p.ph||[],sort:i*10};
       if(p.id!=null){row.id=p.id;ex.push(row)}else nw.push(row);
     });
     var r;
